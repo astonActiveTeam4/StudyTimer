@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">StudyTimer</string>
+    <string name="action_settings">Settings</string>
+    <string name="study_time_input_label">Study Time (in minutes)</string>
+    <string name="study_start_button">Start Studying</string>
+    <string name="title_activity_timer">TimerActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
