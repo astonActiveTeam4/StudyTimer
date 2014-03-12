@@ -2,6 +2,9 @@ package aston.team4.studytimer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -22,16 +25,16 @@ public class TimerActivity extends ActionBarActivity
 
     private long startTime = 0L;
 
-    private Handler customHandler = new Handler();
+//    private Handler customHandler = new Handler();
 
-    private long sessionLength; //TODO: Remove this when timing is given its own service
+//    private long sessionLength; //TODO: Remove this when timing is given its own service
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_timer );
-        sessionLength = getIntent().getIntExtra( SESSION_LENGTH, -1 );
+        long sessionLength = getIntent().getLongExtra( SESSION_LENGTH, -1 );
 
         timerText = (TextView) findViewById( R.id.TimerText );
 
@@ -41,7 +44,7 @@ public class TimerActivity extends ActionBarActivity
 
         //TODO: Remove this when timing is given its own service
         startTime = SystemClock.uptimeMillis();
-        customHandler.postDelayed( updateTimerThread, 0 );
+//        customHandler.postDelayed( updateTimerThread, 0 );
     }
 
 
@@ -111,28 +114,39 @@ public class TimerActivity extends ActionBarActivity
         timerText.setText( text );
     }
 
-    //TODO: Remove this when timing is given its own service
-    //From: http://examples.javacodegeeks.com/android/core/os/handler/android-timer-example/
-    private Runnable updateTimerThread = new Runnable()
+//    //TODO: Remove this when timing is given its own service
+//    //From: http://examples.javacodegeeks.com/android/core/os/handler/android-timer-example/
+//    private Runnable updateTimerThread = new Runnable()
+//    {
+//        public void run()
+//        {
+//            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+//
+//            long timeLeft = ( sessionLength * 1000 ) - timeInMilliseconds;
+//
+//            if ( timeLeft > 0 )
+//            {
+//                customHandler.postDelayed( this, 50 );
+//            }
+//            else
+//            {
+//                studyComplete();
+//            }
+//
+//            updateTimer( timeLeft );
+//        }
+//
+//    };
+
+    private class TickReceiver extends BroadcastReceiver
     {
-        public void run()
+        @Override
+        public void onReceive( Context context, Intent intent )
         {
-            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-
-            long timeLeft = ( sessionLength * 1000 ) - timeInMilliseconds;
-
-            if ( timeLeft > 0 )
-            {
-                customHandler.postDelayed( this, 50 );
-            }
-            else
-            {
-                studyComplete();
-            }
+            long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, -1 );
+            String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
             updateTimer( timeLeft );
         }
-
-    };
-
+    }
 }
