@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Timer;
+import java.util.HashMap;
 
 public class TimerService extends IntentService
 {
@@ -17,10 +17,13 @@ public class TimerService extends IntentService
     public static final String TICK_MINUTE = "aston.team4.studytimer.TimerService.TICK_MINUTE";
     public static final String TICK_SECOND = "aston.team4.studytimer.TimerService.TICK_SECOND";
     public static final String TIME_LEFT = "aston.team4.studytimer.TimerService.TIME_LEFT";
+    public static final String ALERT_SESSION_END = "aston.team4.studytimer.TimerService.ALERT_SESSION_END";
+    public static final String ACTION = "aston.team4.studytimer.TimerService.ACTION";
+    public static final String ACTION_ADD_TIMER = "aston.team4.studytimer.TimerService.ACTION.ADD_TIMER";
 
-    private static final int TIMER_DELAY = 100; //Maybe up this to 1 second?
+    private static final int TIMER_DELAY = 500; //Maybe up this to 1 second?
 
-    private ArrayList<TimerEvent> timers = new ArrayList<TimerEvent>();
+    private HashMap<String, TimerEvent> timers = new HashMap<String, TimerEvent>();
     private Handler customHandler = new Handler();
 
     public TimerService()
@@ -34,24 +37,26 @@ public class TimerService extends IntentService
         return null;
     }
 
-    /**
-     * This method is invoked on the worker thread with a request to process.
-     * Only one Intent is processed at a time, but the processing happens on a
-     * worker thread that runs independently from other application logic.
-     * So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else.
-     * When all requests have been handled, the IntentService stops itself,
-     * so you should not call {@link #stopSelf}.
-     *
-     * @param intent The value passed to {@link
-     *               android.content.Context#startService(android.content.Intent)}.
-     */
     @Override
     protected void onHandleIntent( Intent intent )
     {
+        String action = intent.getStringExtra( ACTION );
+
+        Log.d( SERVICE_NAME, "Got intent" );
+        Log.d( SERVICE_NAME, "Intent: " + action );
+
+        if ( action.equals( ACTION_ADD_TIMER ) )
+        {
+            addTimerIntent( intent );
+        }
+    }
+
+    private void addTimerIntent( Intent intent )
+    {
+        Log.d( SERVICE_NAME, "Adding timer" );
         long runningTime = intent.getLongExtra( SESSION_LENGTH, -1 );
         String timerName = intent.getStringExtra( SESSION_NAME );
-        if ( runningTime < 0 || timerName.length() > 0 )
+        if ( runningTime < 0 || timerName.length() == 0 )
         {
             return;
         }
@@ -61,7 +66,9 @@ public class TimerService extends IntentService
         te.length = runningTime;
         te.timerName = timerName;
 
-        timers.add( te );
+        timers.put( timerName, te );
+
+        Log.d( SERVICE_NAME, "Added timer" );
 
         startTimerThread();
     }
@@ -74,6 +81,8 @@ public class TimerService extends IntentService
         {
             customHandler.postDelayed( updateTimerThread, TIMER_DELAY );
             isTimerRunning = true;
+
+            Log.d( SERVICE_NAME, "Started timer" );
         }
     }
 
@@ -83,14 +92,34 @@ public class TimerService extends IntentService
 
         public void run()
         {
-            long cTime = SystemClock.uptimeMillis();
+            long cTimeMsec = SystemClock.uptimeMillis();
 
-            for ( TimerEvent te : timers )
+            boolean notifyMinute = false;
+            long cMinute = Math.round( ( cTimeMsec / 1000 ) / 60 );
+            if ( ( cMinute % 60 ) == 0 && cMinute != lastMinute )
             {
-                if ( ( cTime - te.lastUpdate ) > 1000 ) //Ensure it has been at least 1 second since the last update, no point waiting any less
+                notifyMinute = true;
+                lastMinute = cMinute;
+            }
+
+            for ( TimerEvent te : timers.values() )
+            {
+                if ( ( cTimeMsec - te.lastUpdate ) > 1000 ) //Ensure it has been at least 1 second since the last update, no point waiting any less
                 {
-                    long timeMsec = cTime - te.startTime;
-                    long timeLeftMsec = te.length - timeMsec;
+                    long timePassedMsec = cTimeMsec - te.startTime;
+                    long timeLeftMsec = te.length - timePassedMsec;
+
+                    onTick1Second( te, timeLeftMsec );
+
+                    if ( notifyMinute )
+                    {
+                        onTick1Minute( te, timeLeftMsec );
+                    }
+
+                    if ( timeLeftMsec <= 0 )
+                    {
+                        onAlertSessionEnd( te );
+                    }
                 }
             }
 
@@ -102,31 +131,47 @@ public class TimerService extends IntentService
             {
                 isTimerRunning = false;
             }
-
         }
 
     };
 
     private void onTick1Second( TimerEvent te, long timeLeftMsec )
     {
+        Log.d( SERVICE_NAME, "Broadcast 1 second!" );
 
-    }
-
-    private void onTick1Minute( TimerEvent te, long timeLeftMsec )
-    {
-
-    }
-
-    private void sendTimerUpdate( TimerEvent te, long timeLeftMsec )
-    {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction( TICK_SECOND );
-        broadcastIntent.addCategory( Intent.CATEGORY_DEFAULT );
+//        broadcastIntent.addCategory( Intent.CATEGORY_DEFAULT );
         broadcastIntent.putExtra( SESSION_NAME, te.timerName );
-        broadcastIntent.putExtra( TICK_SECOND, Math.round( timeLeftMsec / 1000 ) );
+        broadcastIntent.putExtra( TICK_SECOND, timeLeftMsec / 1000 );
         sendBroadcast( broadcastIntent );
+
+//        LocalBroadcastManager.getInstance( this ).sendBroadcast( broadcastIntent );
     }
 
+    private void onTick1Minute( TimerEvent te, long timeLeftMsec ) //Do we actually need this?
+    {
+        Log.d( SERVICE_NAME, "Broadcast 1 minute!" );
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction( TICK_MINUTE );
+//        broadcastIntent.addCategory( Intent.CATEGORY_DEFAULT );
+        broadcastIntent.putExtra( SESSION_NAME, te.timerName );
+        broadcastIntent.putExtra( TIME_LEFT, timeLeftMsec / 1000 );
+        sendBroadcast( broadcastIntent );
+
+//        LocalBroadcastManager.getInstance( this ).sendBroadcast( broadcastIntent );
+    }
+
+    private void onAlertSessionEnd( TimerEvent te )
+    {
+
+    }
+
+    /**
+     * TimerEvent
+     * <p/>
+     * All times are in milliseconds
+     */
     private class TimerEvent
     {
         public long startTime;
@@ -134,4 +179,6 @@ public class TimerService extends IntentService
         public String timerName;
         public long lastUpdate;
     }
+
+    //Foreground running ahead
 }

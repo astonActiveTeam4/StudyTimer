@@ -5,12 +5,9 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +20,7 @@ public class TimerActivity extends ActionBarActivity
 
     private TextView timerText;
 
-    private long startTime = 0L;
+//    private long startTime = 0L;
 
 //    private Handler customHandler = new Handler();
 
@@ -34,19 +31,28 @@ public class TimerActivity extends ActionBarActivity
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_timer );
-        long sessionLength = getIntent().getLongExtra( SESSION_LENGTH, -1 );
+        long sessionLength = getIntent().getLongExtra( SESSION_LENGTH, 0 );
 
         timerText = (TextView) findViewById( R.id.TimerText );
 
-//        Intent intent = new Intent( this, TimerService.class );
-//        intent.putExtra( SESSION_LENGTH, sessionLength ); //TODO: add a session length inside of the service
-//        startService( intent );
-
-        //TODO: Remove this when timing is given its own service
-        startTime = SystemClock.uptimeMillis();
-//        customHandler.postDelayed( updateTimerThread, 0 );
+        addTimer( "timer0", sessionLength );
+        setupBroadcastReceiver();
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+        unregisterReceiver( TickReceiver );
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        setupBroadcastReceiver();
+    }
 
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
@@ -72,7 +78,18 @@ public class TimerActivity extends ActionBarActivity
 
     private void setupBroadcastReceiver()
     {
-        //TODO: write service broadcast recevier
+        IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
+//        intentFilter.addCategory( Intent.CATEGORY_DEFAULT );
+        registerReceiver( TickReceiver, intentFilter );
+    }
+
+    private void addTimer( String sessionName, long sessionLength )
+    {
+        Intent intent = new Intent( this, TimerService.class );
+        intent.putExtra( TimerService.ACTION, TimerService.ACTION_ADD_TIMER );
+        intent.putExtra( TimerService.SESSION_NAME, sessionName );
+        intent.putExtra( TimerService.SESSION_LENGTH, sessionLength ); //TODO: add a session length inside of the service
+        startService( intent );
     }
 
     public void intervalComplete()
@@ -82,17 +99,15 @@ public class TimerActivity extends ActionBarActivity
 
     public void studyComplete()
     {
-        Notification.Builder nb = new Notification.Builder( this )
+        //TODO: figure out what the hell's up with this
+//        Notification.Builder nb = new Notification.Builder( this )
+        NotificationCompat.Builder nb = new NotificationCompat.Builder( this )
                 .setContentTitle( "Study Done" )
-                .setContentText( "You can stop studying now" );
+                .setContentText( "You can stop studying now" )
+                .setSmallIcon( R.drawable.ic_launcher );
 
-        if ( Build.VERSION.SDK_INT >= 11 )
-        {
-            nb.setSmallIcon( R.drawable.ic_launcher );
-        }
-
-        Uri alarmSound = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_ALARM );
-        nb.setSound( alarmSound );
+//        Uri alarmSound = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_ALARM );
+//        nb.setSound( alarmSound );
 
         Notification notification = nb.build();
         notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
@@ -101,9 +116,9 @@ public class TimerActivity extends ActionBarActivity
         nm.notify( STUDY_END, 0, notification );
     }
 
-    private void updateTimer( long timeLeftMsec )
+    private void updateTimer( long timeLeft )
     {
-        int secs = (int) ( timeLeftMsec / 1000 );
+        int secs = (int) timeLeft;
         int mins = secs / 60;
         int hours = mins / 60;
 
@@ -138,15 +153,15 @@ public class TimerActivity extends ActionBarActivity
 //
 //    };
 
-    private class TickReceiver extends BroadcastReceiver
+    private BroadcastReceiver TickReceiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive( Context context, Intent intent )
         {
-            long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, -1 );
+            long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
             String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
             updateTimer( timeLeft );
         }
-    }
+    };
 }
