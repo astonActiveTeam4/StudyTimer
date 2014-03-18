@@ -6,7 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -22,7 +24,7 @@ public class TimerActivity extends ActionBarActivity
 
 //    private long startTime = 0L;
 
-//    private Handler customHandler = new Handler();
+    private Handler tickReceiverThreadHandler = new Handler();
 
 //    private long sessionLength; //TODO: Remove this when timing is given its own service
 
@@ -44,7 +46,7 @@ public class TimerActivity extends ActionBarActivity
     {
         super.onPause();
 
-        unregisterReceiver( TickReceiver );
+        unregisterReceiver( tickReceiverThread.tickReceiver );
     }
 
     @Override
@@ -153,15 +155,35 @@ public class TimerActivity extends ActionBarActivity
 //
 //    };
 
-    private BroadcastReceiver TickReceiver = new BroadcastReceiver()
+    private Thread tickReceiverThread = new Thread()
     {
         @Override
-        public void onReceive( Context context, Intent intent )
+        public void run()
         {
-            long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
-            String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
-            updateTimer( timeLeft );
         }
+
+        public void startReceiver()
+        {
+
+        }
+
+        public void stopReceiver()
+        {
+
+        }
+
+        public BroadcastReceiver tickReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive( Context context, Intent intent )
+            {
+                long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
+                String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
+
+                updateTimer( timeLeft );
+            }
+        };
     };
+
 }

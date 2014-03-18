@@ -20,6 +20,7 @@ public class TimerService extends IntentService
     public static final String ALERT_SESSION_END = "aston.team4.studytimer.TimerService.ALERT_SESSION_END";
     public static final String ACTION = "aston.team4.studytimer.TimerService.ACTION";
     public static final String ACTION_ADD_TIMER = "aston.team4.studytimer.TimerService.ACTION.ADD_TIMER";
+    public static final String ACTION_STOP_TIMER = "aston.team4.studytimer.TimerService.ACTION_STOP_TIMER";
 
     private static final int TIMER_DELAY = 500; //Maybe up this to 1 second?
 
@@ -49,6 +50,10 @@ public class TimerService extends IntentService
         {
             addTimerIntent( intent );
         }
+        else if ( action.equals( ACTION_STOP_TIMER ) )
+        {
+            stopTimerIntent( intent );
+        }
     }
 
     private void addTimerIntent( Intent intent )
@@ -71,6 +76,15 @@ public class TimerService extends IntentService
         Log.d( SERVICE_NAME, "Added timer" );
 
         startTimerThread();
+    }
+
+    private void stopTimerIntent( Intent intent )
+    {
+        Log.d( SERVICE_NAME, "Stopping timer" );
+        String timerName = intent.getStringExtra( SESSION_NAME );
+
+        onAlertSessionEnd( timers.get( timerName ) );
+        timers.remove( timerName );
     }
 
     private boolean isTimerRunning = false;
