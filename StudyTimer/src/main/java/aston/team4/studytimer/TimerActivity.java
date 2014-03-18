@@ -17,7 +17,8 @@ import android.widget.TextView;
 
 public class TimerActivity extends ActionBarActivity
 {
-    public static final String SESSION_LENGTH = "aston.team4.studytimer.TimerActivity.SESSION_LENGTH";
+    public static final String STUDY_LENGTH = "aston.team4.studytimer.TimerActivity.SESSION_LENGTH";
+    public static final String BREAK_LENGTH = "aston.team4.studytimer.TimerActivity.BREAK_LENGTH";
     private static final String STUDY_END = "aston.team4.studytimer.TimerActivity.STUDY_END";
 
     private TextView timerText;
@@ -28,17 +29,21 @@ public class TimerActivity extends ActionBarActivity
 
 //    private long sessionLength; //TODO: Remove this when timing is given its own service
 
+    private long studyLength, breakLength;
+
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_timer );
-        long sessionLength = getIntent().getLongExtra( SESSION_LENGTH, 0 );
+        long sessionLength = getIntent().getLongExtra( STUDY_LENGTH, 0 );
 
         timerText = (TextView) findViewById( R.id.TimerText );
 
-        addTimer( "timer0", sessionLength );
+        addTimer( "studyTimer", sessionLength );
         setupBroadcastReceiver();
+
+        studyLength = sessionLength;
     }
 
     @Override
@@ -160,6 +165,16 @@ public class TimerActivity extends ActionBarActivity
                 String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
                 updateTimer( timeLeft );
+
+                if(timeLeft <= 0) {
+                    if(timerName.equals("studyTimer")) {
+                        long breakLength = getIntent().getLongExtra(BREAK_LENGTH, 0);
+                        addTimer("breakTimer", breakLength);
+                    } else if (timerName.equals("breakTimer")) {
+                        long breakLength = getIntent().getLongExtra(STUDY_LENGTH, 0);
+                        addTimer("study0", breakLength);
+                    }
+                }
             }
         };
     };
