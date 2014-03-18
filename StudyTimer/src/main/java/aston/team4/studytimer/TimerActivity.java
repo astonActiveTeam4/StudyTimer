@@ -169,13 +169,15 @@ public class TimerActivity extends ActionBarActivity
                 {
                     if ( timerName.equals( "studyTimer" ) )
                     {
+                        stopTimer("studyTimer");
                         long breakLength = getIntent().getLongExtra( BREAK_LENGTH, 0 );
                         addTimer( "breakTimer", breakLength );
                     }
                     else if ( timerName.equals( "breakTimer" ) )
                     {
+                        stopTimer("breakTimer");
                         long breakLength = getIntent().getLongExtra( STUDY_LENGTH, 0 );
-                        addTimer( "study0", breakLength );
+                        addTimer( "studyTimer", breakLength );
                     }
                 }
             }
