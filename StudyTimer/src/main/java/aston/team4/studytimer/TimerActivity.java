@@ -15,8 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.Timer;
-
 public class TimerActivity extends ActionBarActivity
 {
     public static final String STUDY_LENGTH = "aston.team4.studytimer.TimerActivity.SESSION_LENGTH";
@@ -167,13 +165,17 @@ public class TimerActivity extends ActionBarActivity
 
                 updateTimer( timeLeft, timerName );
 
-                if(timeLeft <= 0) {
-                    if(timerName.equals("studyTimer")) {
-                        long breakLength = getIntent().getLongExtra(BREAK_LENGTH, 0);
-                        addTimer("breakTimer", breakLength);
-                    } else if (timerName.equals("breakTimer")) {
-                        long breakLength = getIntent().getLongExtra(STUDY_LENGTH, 0);
-                        addTimer("study0", breakLength);
+                if ( timeLeft <= 0 )
+                {
+                    if ( timerName.equals( "studyTimer" ) )
+                    {
+                        long breakLength = getIntent().getLongExtra( BREAK_LENGTH, 0 );
+                        addTimer( "breakTimer", breakLength );
+                    }
+                    else if ( timerName.equals( "breakTimer" ) )
+                    {
+                        long breakLength = getIntent().getLongExtra( STUDY_LENGTH, 0 );
+                        addTimer( "study0", breakLength );
                     }
                 }
             }
