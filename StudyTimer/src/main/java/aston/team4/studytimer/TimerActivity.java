@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -14,6 +13,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.util.Timer;
 
 public class TimerActivity extends ActionBarActivity
 {
@@ -84,6 +85,7 @@ public class TimerActivity extends ActionBarActivity
 //        IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
 ////        intentFilter.addCategory( Intent.CATEGORY_DEFAULT );
 //        registerReceiver( TickReceiver, intentFilter );
+        tickReceiverThread.start();
     }
 
     private void addTimer( String sessionName, long sessionLength )
@@ -92,6 +94,14 @@ public class TimerActivity extends ActionBarActivity
         intent.putExtra( TimerService.ACTION, TimerService.ACTION_ADD_TIMER );
         intent.putExtra( TimerService.SESSION_NAME, sessionName );
         intent.putExtra( TimerService.SESSION_LENGTH, sessionLength ); //TODO: add a session length inside of the service
+        startService( intent );
+    }
+
+    private void stopTimer( String sessionName )
+    {
+        Intent intent = new Intent( this, TimerService.class );
+        intent.putExtra( TimerService.ACTION, TimerService.ACTION_STOP_TIMER );
+        intent.putExtra( TimerService.SESSION_NAME, sessionName );
         startService( intent );
     }
 
@@ -119,7 +129,7 @@ public class TimerActivity extends ActionBarActivity
         nm.notify( STUDY_END, 0, notification );
     }
 
-    private void updateTimer( long timeLeft )
+    private void updateTimer( long timeLeft, String timerName )
     {
         int secs = (int) timeLeft;
         int mins = secs / 60;
@@ -129,7 +139,7 @@ public class TimerActivity extends ActionBarActivity
         secs = secs % 60;
 
         String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
-        timerText.setText( text );
+        timerText.setText( timerName + "\n" + text );
     }
 
     private Thread tickReceiverThread = new Thread()
@@ -141,15 +151,6 @@ public class TimerActivity extends ActionBarActivity
             registerReceiver( tickReceiver, intentFilter );
         }
 
-        public void startReceiver()
-        {
-
-        }
-
-        public void stopReceiver()
-        {
-
-        }
 
         public BroadcastReceiver tickReceiver = new BroadcastReceiver()
         {
@@ -159,7 +160,7 @@ public class TimerActivity extends ActionBarActivity
                 long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
                 String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
-                updateTimer( timeLeft );
+                updateTimer( timeLeft, timerName );
             }
         };
     };
