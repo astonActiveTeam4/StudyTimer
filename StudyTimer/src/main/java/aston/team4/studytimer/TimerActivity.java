@@ -46,7 +46,8 @@ public class TimerActivity extends ActionBarActivity
     {
         super.onPause();
 
-        unregisterReceiver( tickReceiverThread.tickReceiver );
+//        unregisterReceiver( tickReceiverThread.tickReceiver );
+//        tickReceiverThreadHandler.
     }
 
     @Override
@@ -80,9 +81,9 @@ public class TimerActivity extends ActionBarActivity
 
     private void setupBroadcastReceiver()
     {
-        IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
-//        intentFilter.addCategory( Intent.CATEGORY_DEFAULT );
-        registerReceiver( TickReceiver, intentFilter );
+//        IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
+////        intentFilter.addCategory( Intent.CATEGORY_DEFAULT );
+//        registerReceiver( TickReceiver, intentFilter );
     }
 
     private void addTimer( String sessionName, long sessionLength )
@@ -131,36 +132,13 @@ public class TimerActivity extends ActionBarActivity
         timerText.setText( text );
     }
 
-//    //TODO: Remove this when timing is given its own service
-//    //From: http://examples.javacodegeeks.com/android/core/os/handler/android-timer-example/
-//    private Runnable updateTimerThread = new Runnable()
-//    {
-//        public void run()
-//        {
-//            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-//
-//            long timeLeft = ( sessionLength * 1000 ) - timeInMilliseconds;
-//
-//            if ( timeLeft > 0 )
-//            {
-//                customHandler.postDelayed( this, 50 );
-//            }
-//            else
-//            {
-//                studyComplete();
-//            }
-//
-//            updateTimer( timeLeft );
-//        }
-//
-//    };
-
     private Thread tickReceiverThread = new Thread()
     {
         @Override
         public void run()
         {
-
+            IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
+            registerReceiver( tickReceiver, intentFilter );
         }
 
         public void startReceiver()
