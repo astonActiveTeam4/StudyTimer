@@ -2,12 +2,10 @@ package aston.team4.studytimer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,32 +14,35 @@ import android.widget.TextView;
 public class TimerActivity extends ActionBarActivity
 {
     public static final String SESSION_LENGTH = "aston.team4.studytimer.TimerActivity.SESSION_LENGTH";
+    public static final String STUDY_LENGTH = "aston.team4.studytimer.TimerActivity.STUDY_LENGTH";
+    public static final String BREAK_LENGTH = "aston.team4.studytimer.TimerActivity.BREAK_LENGTH";
     private static final String STUDY_END = "aston.team4.studytimer.TimerActivity.STUDY_END";
+
+    //TODO: remove these strings, these IDs are temporary!
+    private static final String STUDY_ID = "study time";
+    private static final String BREAK_ID = "break time";
 
     private TextView timerText;
 
-    private long startTime = 0L;
+//    private long startTime = 0L;
 
     private Handler customHandler = new Handler();
 
-    private long sessionLength; //TODO: Remove this when timing is given its own service
+    private long sessionLength, studyLength, breakLength, totalTimeStudied = 0;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_timer );
-        sessionLength = getIntent().getIntExtra( SESSION_LENGTH, -1 );
+        sessionLength = getIntent().getLongExtra( SESSION_LENGTH, 0 );
+        studyLength = getIntent().getLongExtra( STUDY_LENGTH, 0 );
+        breakLength = getIntent().getLongExtra( BREAK_LENGTH, 0 );
 
         timerText = (TextView) findViewById( R.id.TimerText );
 
-//        Intent intent = new Intent( this, TimerService.class );
-//        intent.putExtra( SESSION_LENGTH, sessionLength ); //TODO: add a session length inside of the service
+        addTimer( STUDY_ID, studyLength );
 //        startService( intent );
-
-        //TODO: Remove this when timing is given its own service
-        startTime = SystemClock.uptimeMillis();
-        customHandler.postDelayed( updateTimerThread, 0 );
     }
 
 
@@ -72,6 +73,25 @@ public class TimerActivity extends ActionBarActivity
         //TODO: write service broadcast recevier
     }
 
+    private void addTimer( String sessionName, long sessionLength )
+    {
+        Intent intent = new Intent( this, TimerService.class );
+        intent.putExtra( TimerService.ACTION, TimerService.ACTION_ADD_TIMER );
+        intent.putExtra( TimerService.SESSION_NAME, sessionName );
+        intent.putExtra( TimerService.SESSION_LENGTH, sessionLength ); //TODO: add a session length inside of the service
+
+        timerService.timerFromIntent( intent );
+    }
+
+    private void stopTimer( String sessionName )
+    {
+        Intent intent = new Intent( this, TimerService.class );
+        intent.putExtra( TimerService.ACTION, TimerService.ACTION_STOP_TIMER );
+        intent.putExtra( TimerService.SESSION_NAME, sessionName );
+
+        timerService.timerFromIntent( intent );
+    }
+
     public void intervalComplete()
     {
 
@@ -79,17 +99,15 @@ public class TimerActivity extends ActionBarActivity
 
     public void studyComplete()
     {
-        Notification.Builder nb = new Notification.Builder( this )
+        //TODO: figure out what the hell's up with this
+//        Notification.Builder nb = new Notification.Builder( this )
+        NotificationCompat.Builder nb = new NotificationCompat.Builder( this )
                 .setContentTitle( "Study Done" )
-                .setContentText( "You can stop studying now" );
+                .setContentText( "You can stop studying now" )
+                .setSmallIcon( R.drawable.ic_launcher );
 
-        if ( Build.VERSION.SDK_INT >= 11 )
-        {
-            nb.setSmallIcon( R.drawable.ic_launcher );
-        }
-
-        Uri alarmSound = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_ALARM );
-        nb.setSound( alarmSound );
+//        Uri alarmSound = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_ALARM );
+//        nb.setSound( alarmSound );
 
         Notification notification = nb.build();
         notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
@@ -98,9 +116,9 @@ public class TimerActivity extends ActionBarActivity
         nm.notify( STUDY_END, 0, notification );
     }
 
-    private void updateTimer( long timeLeftMsec )
+    private void updateTimer( long timeLeft, String timerName )
     {
-        int secs = (int) ( timeLeftMsec / 1000 );
+        int secs = (int) timeLeft;
         int mins = secs / 60;
         int hours = mins / 60;
 
@@ -108,31 +126,36 @@ public class TimerActivity extends ActionBarActivity
         secs = secs % 60;
 
         String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
-        timerText.setText( text );
+        timerText.setText( timerName + "\n" + text );
     }
 
-    //TODO: Remove this when timing is given its own service
-    //From: http://examples.javacodegeeks.com/android/core/os/handler/android-timer-example/
-    private Runnable updateTimerThread = new Runnable()
+    private TimerService timerService = new TimerService( this );
+
+    public void tickCallback( Intent intent )
     {
-        public void run()
+        long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
+        String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
+
+        updateTimer( timeLeft, timerName );
+
+        if ( timeLeft <= 0 )
         {
-            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-
-            long timeLeft = ( sessionLength * 1000 ) - timeInMilliseconds;
-
-            if ( timeLeft > 0 )
+            if ( timerName.equals( STUDY_ID ) )
             {
-                customHandler.postDelayed( this, 50 );
+                addTimer( BREAK_ID, breakLength );
+                totalTimeStudied += breakLength;
             }
-            else
+            else if ( timerName.equals( BREAK_ID ) )
             {
-                studyComplete();
+                addTimer( STUDY_ID, studyLength );
+                totalTimeStudied += breakLength;
             }
-
-            updateTimer( timeLeft );
         }
 
-    };
+        if ( ( totalTimeStudied - sessionLength - timeLeft ) <= 0 )
+        {
+            //Total session length over
+        }
+    }
 
 }
