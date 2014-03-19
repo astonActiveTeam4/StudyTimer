@@ -8,8 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.Timer;
-
 public class SetupActivity extends ActionBarActivity
 {
     @Override

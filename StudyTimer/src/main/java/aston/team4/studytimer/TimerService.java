@@ -4,11 +4,12 @@ package aston.team4.studytimer;
 
 import android.content.Intent;
 import android.os.Handler;
-//import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.HashMap;
+
+//import android.os.IBinder;
 
 public class TimerService
 {
@@ -153,6 +154,7 @@ public class TimerService
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction( TICK_SECOND );
         broadcastIntent.putExtra( SESSION_NAME, te.timerName );
+        broadcastIntent.putExtra( SESSION_LENGTH, te.length / 1000 );
         broadcastIntent.putExtra( TIME_LEFT, timeLeftMsec / 1000 );
 //        sendBroadcast( broadcastIntent );
 
@@ -166,6 +168,7 @@ public class TimerService
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction( TICK_MINUTE );
         broadcastIntent.putExtra( SESSION_NAME, te.timerName );
+        broadcastIntent.putExtra( SESSION_LENGTH, te.length / 1000 );
         broadcastIntent.putExtra( TIME_LEFT, timeLeftMsec / 1000 );
 //        sendBroadcast( broadcastIntent );
 

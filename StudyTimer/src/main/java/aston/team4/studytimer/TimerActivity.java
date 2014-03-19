@@ -93,7 +93,7 @@ public class TimerActivity extends ActionBarActivity
         timerService.timerFromIntent( intent );
     }
 
-    public void intervalComplete()
+    public void intervalComplete( String timerName )
     {
 
     }
@@ -117,9 +117,9 @@ public class TimerActivity extends ActionBarActivity
         nm.notify( STUDY_END, 0, notification );
     }
 
-    private void updateTimer( long timeLeft, String timerName )
+    private void updateTimer( long sessionTimeLeft, long intervalTimeLeft, String timerName )
     {
-        int secs = (int) timeLeft;
+        int secs = (int) intervalTimeLeft;
         int mins = secs / 60;
         int hours = mins / 60;
 
@@ -127,22 +127,50 @@ public class TimerActivity extends ActionBarActivity
         secs = secs % 60;
 
         String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
-        timerText.setText( timerName + "\n" + text );
+
+        //DEBUG PUT THIS SOMEWHERE ELSE
+        secs = (int) sessionTimeLeft;
+        mins = secs / 60;
+        hours = mins / 60;
+
+        mins = mins % 60;
+        secs = secs % 60;
+
+
+        String sessionText = String.format( "%01d:%02d:%02d", hours, mins, secs );
+
+        timerText.setText( timerName + "\n" + text + "\nSession time left\n" + sessionText );
     }
 
     private TimerService timerService = new TimerService( this );
 
     public void tickCallback( Intent intent )
     {
-        long timeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
+        long intervalTimeLeft = intent.getLongExtra( TimerService.TIME_LEFT, 0 );
+        long intervalLength = intent.getLongExtra( TimerService.SESSION_LENGTH, 0 );
+        long sessionTimeLeft = ( sessionLength + intervalTimeLeft ) - ( totalTimeStudied + intervalLength ); //TODO: this algorithm works but I have no idea why, need to refactor it
         String timerName = intent.getStringExtra( TimerService.SESSION_NAME );
 
-        updateTimer( timeLeft, timerName );
+        updateTimer( sessionTimeLeft, intervalTimeLeft, timerName );
 
-        if ( timeLeft <= 0 )
+        //Move this down below the log down there to let the last interval end before stopping
+        if ( sessionTimeLeft <= 0 )
+        {
+            //Total session length over
+            stopTimer( timerName );
+
+            updateTimer( sessionTimeLeft, intervalTimeLeft, "Studying over" );
+
+            studyComplete();
+            return;
+        }
+
+        if ( intervalTimeLeft <= 0 )
         {
             Log.d( "TimerActivity", "Stopping timer: " + timerName );
             stopTimer( timerName );
+
+            intervalComplete( timerName );
 
             if ( timerName.equals( STUDY_ID ) )
             {
@@ -152,13 +180,8 @@ public class TimerActivity extends ActionBarActivity
             else if ( timerName.equals( BREAK_ID ) )
             {
                 addTimer( STUDY_ID, studyLength );
-                totalTimeStudied += breakLength;
+                totalTimeStudied += studyLength;
             }
-        }
-
-        if ( ( totalTimeStudied - sessionLength - timeLeft ) <= 0 )
-        {
-            //Total session length over
         }
     }
 
