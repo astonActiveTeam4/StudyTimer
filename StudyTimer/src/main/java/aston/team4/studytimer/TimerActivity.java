@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -140,6 +141,9 @@ public class TimerActivity extends ActionBarActivity
 
         if ( timeLeft <= 0 )
         {
+            Log.d( "TimerActivity", "Stopping timer: " + timerName );
+            stopTimer( timerName );
+
             if ( timerName.equals( STUDY_ID ) )
             {
                 addTimer( BREAK_ID, breakLength );

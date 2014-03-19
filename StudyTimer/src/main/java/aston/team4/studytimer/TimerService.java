@@ -56,7 +56,7 @@ public class TimerService
     private void addTimerIntent( Intent intent )
     {
         Log.d( SERVICE_NAME, "Adding timer" );
-        long runningTime = intent.getLongExtra( SESSION_LENGTH, -1 );
+        long runningTime = intent.getLongExtra( SESSION_LENGTH, -1 ) * 1000;
         String timerName = intent.getStringExtra( SESSION_NAME );
         if ( runningTime < 0 || timerName.length() == 0 )
         {
@@ -148,12 +148,12 @@ public class TimerService
 
     private void onTick1Second( TimerEvent te, long timeLeftMsec )
     {
-        Log.d( SERVICE_NAME, "Broadcast 1 second!" );
+//        Log.d( SERVICE_NAME, "Broadcast 1 second!" );
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction( TICK_SECOND );
         broadcastIntent.putExtra( SESSION_NAME, te.timerName );
-        broadcastIntent.putExtra( TICK_SECOND, timeLeftMsec / 1000 );
+        broadcastIntent.putExtra( TIME_LEFT, timeLeftMsec / 1000 );
 //        sendBroadcast( broadcastIntent );
 
         timerActivity.tickCallback( broadcastIntent );
@@ -162,6 +162,7 @@ public class TimerService
     private void onTick1Minute( TimerEvent te, long timeLeftMsec ) //Do we actually need this?
     {
         Log.d( SERVICE_NAME, "Broadcast 1 minute!" );
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction( TICK_MINUTE );
         broadcastIntent.putExtra( SESSION_NAME, te.timerName );

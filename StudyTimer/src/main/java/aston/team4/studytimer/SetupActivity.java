@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.Timer;
+
 public class SetupActivity extends ActionBarActivity
 {
     @Override
@@ -44,10 +46,18 @@ public class SetupActivity extends ActionBarActivity
     {
         Intent intent = new Intent( this, TimerActivity.class );
 
-        EditText studyTimeInput = (EditText) findViewById( R.id.StudyTimeInput );
-        int studyTime = Integer.valueOf( studyTimeInput.getText().toString() );
+        EditText sessionTimeInput = (EditText) findViewById( R.id.SessionTimeInput );
+        long sessionTime = Integer.valueOf( sessionTimeInput.getText().toString() );
 
-        intent.putExtra( TimerActivity.SESSION_LENGTH, studyTime * 60 );
+        EditText studyTimeInput = (EditText) findViewById( R.id.StudyTimeInput );
+        long studyTime = Integer.valueOf( studyTimeInput.getText().toString() );
+
+        EditText breakTimeInput = (EditText) findViewById( R.id.BreakTimeInput );
+        long breakTime = Integer.valueOf( breakTimeInput.getText().toString() );
+
+        intent.putExtra( TimerActivity.SESSION_LENGTH, sessionTime * 60 );
+        intent.putExtra( TimerActivity.STUDY_LENGTH, studyTime * 60 );
+        intent.putExtra( TimerActivity.BREAK_LENGTH, breakTime * 60 );
 
         startActivity( intent );
     }
