@@ -89,7 +89,7 @@ public class TimerActivity extends ActionBarActivity
 //        IntentFilter intentFilter = new IntentFilter( TimerService.TICK_SECOND );
 ////        intentFilter.addCategory( Intent.CATEGORY_DEFAULT );
 //        registerReceiver( TickReceiver, intentFilter );
-        tickReceiverThread.start();
+//        tickReceiverThread.run();
     }
 
     private void addTimer( String sessionName, long sessionLength )
@@ -155,7 +155,15 @@ public class TimerActivity extends ActionBarActivity
             registerReceiver( tickReceiver, intentFilter );
         }
 
-        public BroadcastReceiver tickReceiver = new BroadcastReceiver()
+        @Override
+        protected void finalize() throws Throwable
+        {
+            super.finalize();
+
+            unregisterReceiver( tickReceiver );
+        }
+
+        public final BroadcastReceiver tickReceiver = new BroadcastReceiver()
         {
             @Override
             public void onReceive( Context context, Intent intent )
