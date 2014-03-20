@@ -48,7 +48,7 @@ public class SetupActivity extends ActionBarActivity
         int studyTime = Integer.valueOf( studyTimeInput.getText().toString() );
 
         EditText breakTimeInput = (EditText) findViewById( R.id.BreakTimeInput );
-        int breakTime = Integer.valueOf( studyTimeInput.getText().toString() );
+        int breakTime = Integer.valueOf( breakTimeInput.getText().toString() );
 
         intent.putExtra( TimerActivity.STUDY_LENGTH, (long) ( studyTime * 60 ) );
         intent.putExtra( TimerActivity.BREAK_LENGTH, (long) ( breakTime * 60 ));
