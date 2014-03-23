@@ -44,29 +44,39 @@ public class SetupActivity extends ActionBarActivity
     {
         Intent intent = new Intent( this, TimerActivity.class );
 
-        EditText inputSessionHours = (EditText) findViewById( R.id.inputSessionHours );
-        EditText inputSessionMins = (EditText) findViewById( R.id.inputSessionMins );
-        long sessionHoursInSecs = (Integer.valueOf( inputSessionHours.getText().toString() ) * 60) * 60;
-        long sessionMinsInSecs = Integer.valueOf( inputSessionMins.getText().toString() ) * 60;
-        long sessionTime = sessionHoursInSecs + sessionMinsInSecs;
+        /*
+        Contains all the EditText fields for that will contribute to a timer.
+         */
+        EditText[] inputField = {
+                (EditText) findViewById( R.id.inputSessionHours ),
+                (EditText) findViewById( R.id.inputSessionMins ),
 
-        EditText inputStudyHours = (EditText) findViewById( R.id.inputStudyHours );
-        EditText inputStudyMins = (EditText) findViewById( R.id.inputStudyMins );
-        long studyHoursInSecs = (Integer.valueOf( inputStudyHours.getText().toString() ) * 60) * 60;
-        long studyMinsInSecs = Integer.valueOf( inputStudyMins.getText().toString() ) * 60;
-        long studyTime = studyHoursInSecs + studyMinsInSecs;
+                (EditText) findViewById( R.id.inputStudyHours ),
+                (EditText) findViewById( R.id.inputStudyMins ),
 
-        EditText inputBreakHours = (EditText) findViewById( R.id.inputBreakHours );
-        EditText inputBreakMins = (EditText) findViewById( R.id.inputBreakMins );
-        long breakHoursInSecs = (Integer.valueOf( inputBreakHours.getText().toString() ) * 60) * 60;
-        long breakMinsInSecs = Integer.valueOf( inputBreakMins.getText().toString() ) * 60;
-        long breakTime = breakHoursInSecs + breakMinsInSecs;
+                (EditText) findViewById( R.id.inputBreakHours ),
+                (EditText) findViewById( R.id.inputBreakMins ),
+        };
 
-        intent.putExtra( TimerActivity.SESSION_LENGTH, sessionTime );
-        intent.putExtra( TimerActivity.STUDY_LENGTH, studyTime );
-        intent.putExtra( TimerActivity.BREAK_LENGTH, breakTime );
+        /*
+        Gets the values from the fields, converts to seconds and insert into TimerActivity.
+
+        Every type of input (session, study, break) has 2 fields (HH and MM), therefore loop increments by 2.
+         */
+        for(int i = 0; i < inputField.length; i += 2) {
+            long inputHoursAsSecs = Integer.valueOf(inputField[i].getText().toString());
+            long inputMinsAsSecs = Integer.valueOf(inputField[i + 1].getText().toString());
+            long inputTime = ((inputHoursAsSecs * 60) * 60) + (inputMinsAsSecs * 60);
+
+            if(i == 0) {
+                intent.putExtra( TimerActivity.SESSION_LENGTH, inputTime );
+            } else if (i == 2) {
+                intent.putExtra(TimerActivity.STUDY_LENGTH, inputTime);
+            } else if (i == 4) {
+                intent.putExtra( TimerActivity.BREAK_LENGTH, inputTime );
+            }
+        }
 
         startActivity( intent );
     }
-
 }
