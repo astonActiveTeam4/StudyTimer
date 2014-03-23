@@ -44,18 +44,27 @@ public class SetupActivity extends ActionBarActivity
     {
         Intent intent = new Intent( this, TimerActivity.class );
 
-        EditText sessionTimeInput = (EditText) findViewById( R.id.SessionTimeInput );
-        long sessionTime = Integer.valueOf( sessionTimeInput.getText().toString() );
+        EditText inputSessionHours = (EditText) findViewById( R.id.inputSessionHours );
+        EditText inputSessionMins = (EditText) findViewById( R.id.inputSessionMins );
+        long sessionHoursInSecs = (Integer.valueOf( inputSessionHours.getText().toString() ) * 60) * 60;
+        long sessionMinsInSecs = Integer.valueOf( inputSessionMins.getText().toString() ) * 60;
+        long sessionTime = sessionHoursInSecs + sessionMinsInSecs;
 
-        EditText studyTimeInput = (EditText) findViewById( R.id.StudyTimeInput );
-        long studyTime = Integer.valueOf( studyTimeInput.getText().toString() );
+        EditText inputStudyHours = (EditText) findViewById( R.id.inputStudyHours );
+        EditText inputStudyMins = (EditText) findViewById( R.id.inputStudyMins );
+        long studyHoursInSecs = (Integer.valueOf( inputStudyHours.getText().toString() ) * 60) * 60;
+        long studyMinsInSecs = Integer.valueOf( inputStudyMins.getText().toString() ) * 60;
+        long studyTime = studyHoursInSecs + studyMinsInSecs;
 
-        EditText breakTimeInput = (EditText) findViewById( R.id.BreakTimeInput );
-        long breakTime = Integer.valueOf( breakTimeInput.getText().toString() );
+        EditText inputBreakHours = (EditText) findViewById( R.id.inputBreakHours );
+        EditText inputBreakMins = (EditText) findViewById( R.id.inputBreakMins );
+        long breakHoursInSecs = (Integer.valueOf( inputBreakHours.getText().toString() ) * 60) * 60;
+        long breakMinsInSecs = Integer.valueOf( inputBreakMins.getText().toString() ) * 60;
+        long breakTime = breakHoursInSecs + breakMinsInSecs;
 
-        intent.putExtra( TimerActivity.SESSION_LENGTH, sessionTime * 60 );
-        intent.putExtra( TimerActivity.STUDY_LENGTH, studyTime * 60 );
-        intent.putExtra( TimerActivity.BREAK_LENGTH, breakTime * 60 );
+        intent.putExtra( TimerActivity.SESSION_LENGTH, sessionTime );
+        intent.putExtra( TimerActivity.STUDY_LENGTH, studyTime );
+        intent.putExtra( TimerActivity.BREAK_LENGTH, breakTime );
 
         startActivity( intent );
     }
