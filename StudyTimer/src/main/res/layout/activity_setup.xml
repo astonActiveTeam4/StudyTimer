@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="totalTimeBlock"
+            android:id="@+id/totalTimeBlock"
             android:layout_marginBottom="30dp">
 
             <TextView
@@ -56,7 +56,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="studyTimeBlock"
+            android:id="@+id/studyTimeBlock"
             android:layout_marginBottom="15dp">
 
             <TextView
@@ -95,7 +95,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="breakTimeBlock"
+            android:id="@+id/breakTimeBlock"
             android:layout_marginBottom="15dp">
 
             <TextView
