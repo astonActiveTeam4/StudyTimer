@@ -1,7 +1,7 @@
 StudyTimer
 ==========
 
-Antoine's prototype of the study timer
+Current working timer. Does not include background running, which is in the TimerService branch. Try not to alter TimerService much at present, as that will be merged with the version from TimerService soon.
 
 Requirements
 ============
