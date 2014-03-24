@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\Alex\AndroidStudioProjects\StudyTimer" />
-            <option value="C:\Users\Alex\AndroidStudioProjects\StudyTimer\StudyTimer" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/StudyTimer" />
           </set>
         </option>
       </GradleProjectSettings>
