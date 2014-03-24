@@ -13,48 +13,121 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/session_time_input_label"
-            />
-
-        <EditText
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/SessionTimeInput"
-            />
+            android:layout_height="fill_parent"
+            android:id="@+id/totalTimeBlock"
+            android:layout_marginBottom="30dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/study_time_input_label"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/session_time_input_label"
+                />
 
-        <EditText
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputSessionHours"
+                    android:hint="Hours"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputSessionMins"
+                    android:hint="Minutes"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/StudyTimeInput"
-            />
+            android:layout_height="fill_parent"
+            android:id="@+id/studyTimeBlock"
+            android:layout_marginBottom="15dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/break_time_input_label"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/study_time_input_label"
+                />
 
-        <EditText
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputStudyHours"
+                    android:hint="Hours"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputStudyMins"
+                    android:hint="Minutes"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/BreakTimeInput"/>
+            android:layout_height="fill_parent"
+            android:id="@+id/breakTimeBlock"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/break_time_input_label"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputBreakHours"
+                    android:hint="Hours"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/inputBreakMins"
+                    android:hint="Minutes"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

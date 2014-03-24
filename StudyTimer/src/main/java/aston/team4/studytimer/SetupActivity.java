@@ -1,12 +1,14 @@
 package aston.team4.studytimer;
 
 import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SetupActivity extends ActionBarActivity
 {
@@ -40,24 +42,72 @@ public class SetupActivity extends ActionBarActivity
         return super.onOptionsItemSelected( item );
     }
 
-    public void onStudyStartButtonPressed( View view )
-    {
-        Intent intent = new Intent( this, TimerActivity.class );
+    public void onStudyStartButtonPressed( View view ) {
+        Intent intent = new Intent(this, TimerActivity.class);
 
-        EditText sessionTimeInput = (EditText) findViewById( R.id.SessionTimeInput );
-        long sessionTime = Integer.valueOf( sessionTimeInput.getText().toString() );
+        /*
+        Contains all the EditText fields for that will contribute to a timer.
+         */
+        EditText[] inputFields = {
+                (EditText) findViewById(R.id.inputSessionHours),
+                (EditText) findViewById(R.id.inputSessionMins),
 
-        EditText studyTimeInput = (EditText) findViewById( R.id.StudyTimeInput );
-        long studyTime = Integer.valueOf( studyTimeInput.getText().toString() );
+                (EditText) findViewById(R.id.inputStudyHours),
+                (EditText) findViewById(R.id.inputStudyMins),
 
-        EditText breakTimeInput = (EditText) findViewById( R.id.BreakTimeInput );
-        long breakTime = Integer.valueOf( breakTimeInput.getText().toString() );
+                (EditText) findViewById(R.id.inputBreakHours),
+                (EditText) findViewById(R.id.inputBreakMins),
+        };
 
-        intent.putExtra( TimerActivity.SESSION_LENGTH, sessionTime * 60 );
-        intent.putExtra( TimerActivity.STUDY_LENGTH, studyTime * 60 );
-        intent.putExtra( TimerActivity.BREAK_LENGTH, breakTime * 60 );
+        /*
+        Gets the values from the fields, converts to seconds and insert into TimerActivity.
 
-        startActivity( intent );
+        Every type of input (session, study, break) has 2 fields (HH and MM), therefore loop increments by 2.
+         */
+        boolean canStart = true;
+        for (int i = 0; i < inputFields.length; i += 2) {
+            String inputHoursString = inputFields[i].getText().toString();
+            String inputMinsString = inputFields[i + 1].getText().toString();
+
+            if (!((inputHoursString.length() == 0) || (inputMinsString.length() == 0))) {
+                long inputHoursAsSecs = Integer.valueOf(inputHoursString);
+                long inputMinsAsSecs = Integer.valueOf(inputMinsString);
+
+                if((inputHoursAsSecs + inputMinsAsSecs) >= 0) { // make sure they're not set to 0. can't have timers endlessly switching between one and the other.
+                    long inputTime = ((inputHoursAsSecs * 60) * 60) + (inputMinsAsSecs * 60);
+
+                    if (i == 0) {
+                        intent.putExtra(TimerActivity.SESSION_LENGTH, inputTime);
+                    } else if (i == 2) {
+                        intent.putExtra(TimerActivity.STUDY_LENGTH, inputTime);
+                    } else if (i == 4) {
+                        intent.putExtra(TimerActivity.BREAK_LENGTH, inputTime);
+                    }
+                } else {
+                    canStart = false;
+                }
+            } else {
+                canStart = false;
+                printToast("Please fill in all fields.");
+            }
+        }
+
+        if(canStart) {
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * Print out a short android toast with a message.
+     * @param message The message to display on screen - should be kept short.
+     */
+    public void printToast(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
 }
