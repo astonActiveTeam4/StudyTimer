@@ -1,7 +1,7 @@
 StudyTimer
 ==========
 
-Current working timer. Does not include background running, which is in the TimerService branch. Try not to alter TimerService much at present, as that will be merged with the version from TimerService soon.
+Current working timer. Does not include background running, which is in the timerservice branch. Try not to alter TimerService.java if you can help it, as that will be merged with the version from the timerservice branch soon.
 
 Requirements
 ============
