@@ -10,6 +10,6 @@
     <string name="title_activity_timer">TimerActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="stop_button">Stop</string>
-    <string name="pause_button">Pause</string>
+
 
 </resources>
