@@ -88,10 +88,7 @@ public class TimerActivity extends ActionBarActivity
            this.finish();
     }
 
-    public void onPauseButtonPressed(View view){
 
-
-    }
     private void stopTimer( String sessionName )
     {
         Intent intent = new Intent( this, TimerService.class );
