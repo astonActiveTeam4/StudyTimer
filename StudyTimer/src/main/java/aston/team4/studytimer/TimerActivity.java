@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class TimerActivity extends ActionBarActivity
@@ -83,7 +84,14 @@ public class TimerActivity extends ActionBarActivity
 
         timerService.timerFromIntent( intent );
     }
+    public void onStopButtonPressed( View view ){
+           this.finish();
+    }
 
+    public void onPauseButtonPressed(View view){
+
+
+    }
     private void stopTimer( String sessionName )
     {
         Intent intent = new Intent( this, TimerService.class );

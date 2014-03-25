@@ -17,4 +17,26 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/TimerText"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_button"
+        android:id="@+id/stopButton"
+        android:singleLine="true"
+        android:onClick="onStopButtonPressed"
+        android:layout_below="@+id/TimerText"
+        android:layout_alignRight="@+id/TimerText"
+        android:layout_alignEnd="@+id/TimerText"
+        android:layout_marginTop="88dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pause_button"
+        android:id="@+id/pauseButton"
+        android:onClick="onPauseButtonPressed"
+        android:layout_alignTop="@+id/stopButton"
+        android:layout_alignLeft="@+id/TimerText"
+        android:layout_alignStart="@+id/TimerText" />
+
 </RelativeLayout>
