@@ -123,7 +123,7 @@ public class TimerActivity extends ActionBarActivity
 //        nb.setSound( alarmSound );
 
         Notification notification = nb.build();
-        notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 
 
         Button stopButton = (Button) findViewById(R.id.stopButton);
