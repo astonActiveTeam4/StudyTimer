@@ -3,6 +3,9 @@ package aston.team4.studytimer;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -11,8 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.media.MediaPlayer;
+
 
 public class TimerActivity extends ActionBarActivity
 {
@@ -26,6 +30,8 @@ public class TimerActivity extends ActionBarActivity
     private static final String BREAK_ID = "break time";
 
     private TextView timerText;
+
+
 
 //    private long startTime = 0L;
 
@@ -117,10 +123,11 @@ public class TimerActivity extends ActionBarActivity
 //        nb.setSound( alarmSound );
 
         Notification notification = nb.build();
-        notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+        notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.FLAG_AUTO_CANCEL;
 
-        NotificationManager nm = (NotificationManager) getSystemService( NOTIFICATION_SERVICE );
-        nm.notify( STUDY_END, 0, notification );
+
+        Button stopButton = (Button) findViewById(R.id.stopButton);
+        stopButton.setText("Back");
     }
 
     private void updateTimer( long sessionTimeLeft, long intervalTimeLeft, String timerName )
@@ -132,7 +139,7 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
+        String text = String.format("%01d:%02d:%02d", hours, mins, secs);
 
         //DEBUG PUT THIS SOMEWHERE ELSE
         secs = (int) sessionTimeLeft;
@@ -142,23 +149,13 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        if( mins == 0 && hours == 0) {
 
-            playSound();
-
-        }
         String sessionText = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
-        timerText.setText( timerName + "\n" + text + "\nSession time left\n" + sessionText );
+        timerText.setText(timerName + "\n" + text + "\nSession time left\n" + sessionText);
     }
 
-    public void playSound() {
 
-        MediaPlayer play = new MediaPlayer();
-        play.create(this, R.raw.timesup);
-        play.start();
-
-    }
 
     private TimerService timerService = new TimerService( this );
 

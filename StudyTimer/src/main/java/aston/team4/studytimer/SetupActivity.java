@@ -68,6 +68,11 @@ public class SetupActivity extends ActionBarActivity
         for (int i = 0; i < inputFields.length; i += 2) {
             String inputHoursString = inputFields[i].getText().toString();
             String inputMinsString = inputFields[i + 1].getText().toString();
+            if(inputHoursString.length() == 0){
+                inputHoursString= "0";
+
+            }
+
 
             if (!((inputHoursString.length() == 0) || (inputMinsString.length() == 0))) {
                 long inputHoursAsSecs = Integer.valueOf(inputHoursString);
@@ -88,6 +93,7 @@ public class SetupActivity extends ActionBarActivity
                 }
             } else {
                 canStart = false;
+
                 printToast("Please fill in all fields.");
             }
         }
