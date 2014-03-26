@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.media.MediaPlayer;
 
 public class TimerActivity extends ActionBarActivity
 {
@@ -141,10 +142,22 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
+        if( mins == 0 && hours == 0) {
 
+            playSound();
+
+        }
         String sessionText = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
         timerText.setText( timerName + "\n" + text + "\nSession time left\n" + sessionText );
+    }
+
+    public void playSound() {
+
+        MediaPlayer play = new MediaPlayer();
+        play.create(this, R.raw.timesup);
+        play.start();
+
     }
 
     private TimerService timerService = new TimerService( this );
