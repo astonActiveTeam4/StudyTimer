@@ -2,12 +2,14 @@ package aston.team4.studytimer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,7 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
+import android.media.MediaPlayer;
 
 public class TimerActivity extends ActionBarActivity
 {
@@ -30,9 +32,7 @@ public class TimerActivity extends ActionBarActivity
     private static final String BREAK_ID = "break time";
 
     private TextView timerText;
-
-
-
+    private Ringtone rt;//ringtone
 //    private long startTime = 0L;
 
     private Handler customHandler = new Handler();
@@ -49,7 +49,7 @@ public class TimerActivity extends ActionBarActivity
         breakLength = getIntent().getLongExtra( BREAK_LENGTH, 0 );
 
         timerText = (TextView) findViewById( R.id.TimerText );
-
+        rt = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
         addTimer( STUDY_ID, studyLength );
 //        startService( intent );
     }
@@ -92,6 +92,10 @@ public class TimerActivity extends ActionBarActivity
         timerService.timerFromIntent( intent );
     }
     public void onStopButtonPressed( View view ){
+
+        stopTimer(STUDY_ID);
+        stopTimer(BREAK_ID);
+        rt.stop();
            this.finish();
     }
 
@@ -112,22 +116,35 @@ public class TimerActivity extends ActionBarActivity
 
     public void studyComplete()
     {
-        //TODO: figure out what the hell's up with this
+
 //        Notification.Builder nb = new Notification.Builder( this )
-        NotificationCompat.Builder nb = new NotificationCompat.Builder( this )
-                .setContentTitle( "Study Done" )
-                .setContentText( "You can stop studying now" )
-                .setSmallIcon( R.drawable.ic_launcher );
+        Intent intent = new Intent();
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle( "Study Done" )//title
+                .setTicker("You can stop studying!")//ticker title
+                .setContentText( "You can stop studying now" )//content
+                .setSmallIcon( R.drawable.ic_launcher )// notification icon
+                .setContentIntent(pIntent).getNotification();//notification object
 
 //        Uri alarmSound = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_ALARM );
 //        nb.setSound( alarmSound );
 
-        Notification notification = nb.build();
-        notification.flags |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
 
+
+
+        NotificationManager nm = (NotificationManager) getSystemService( NOTIFICATION_SERVICE );
+        nm.notify( 0, notification );
 
         Button stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setText("Back");
+        // for ringtone
+        rt.play();
+
+        vibration(1000);
+
+
     }
 
     private void updateTimer( long sessionTimeLeft, long intervalTimeLeft, String timerName )
@@ -139,7 +156,7 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        String text = String.format("%01d:%02d:%02d", hours, mins, secs);
+        String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
         //DEBUG PUT THIS SOMEWHERE ELSE
         secs = (int) sessionTimeLeft;
@@ -149,10 +166,14 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
+        if( mins == 0 && hours == 0) {
 
+
+
+        }
         String sessionText = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
-        timerText.setText(timerName + "\n" + text + "\nSession time left\n" + sessionText);
+        timerText.setText( timerName + "\n" + text + "\nSession time left\n" + sessionText );
     }
 
 
@@ -197,7 +218,16 @@ public class TimerActivity extends ActionBarActivity
                 addTimer( STUDY_ID, studyLength );
                 totalTimeStudied += studyLength;
             }
+           vibration(500);
         }
+
+    }
+
+    private void vibration(int vibration){
+
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        v.vibrate(vibration);
     }
 
 }
