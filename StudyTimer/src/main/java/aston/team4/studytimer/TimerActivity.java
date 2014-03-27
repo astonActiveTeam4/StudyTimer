@@ -90,7 +90,9 @@ public class TimerActivity extends ActionBarActivity
         timerService.timerFromIntent( intent );
     }
     public void onStopButtonPressed( View view ){
-           this.finish();
+        stopTimer(STUDY_ID);
+        stopTimer(BREAK_ID);
+        this.finish(); // kill current activity
     }
 
 
