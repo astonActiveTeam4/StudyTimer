@@ -155,7 +155,7 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        String currentTime = String.format( "%01d:%02d:%02d", hours, mins, secs );
+        String currentTime = String.format( "%02d:%02d:%02d", hours, mins, secs );
 
         //DEBUG PUT THIS SOMEWHERE ELSE
         secs = (int) sessionTimeLeft;
@@ -165,7 +165,7 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        String totalTime = String.format( "%01d:%02d:%02d", hours, mins, secs );
+        String totalTime = String.format( "%02d:%02d:%02d", hours, mins, secs );
 
         currentTimer.setText(currentTime);
         totalTimer.setText(totalTime);
