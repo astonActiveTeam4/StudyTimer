@@ -29,7 +29,10 @@ public class TimerActivity extends ActionBarActivity
     private static final String STUDY_ID = "study time";
     private static final String BREAK_ID = "break time";
 
-    private TextView timerText;
+    private TextView currentText;
+    private TextView currentTimer;
+    private TextView totalText;
+    private TextView totalTimer;
 
 //    private long startTime = 0L;
 
@@ -46,7 +49,12 @@ public class TimerActivity extends ActionBarActivity
         studyLength = getIntent().getLongExtra( STUDY_LENGTH, 0 );
         breakLength = getIntent().getLongExtra( BREAK_LENGTH, 0 );
 
-        timerText = (TextView) findViewById( R.id.TimerText );
+        currentText = (TextView) findViewById( R.id.currentText );
+        currentTimer = (TextView) findViewById( R.id.currentTimer );
+        totalText = (TextView) findViewById( R.id.totalText );
+        totalTimer = (TextView) findViewById( R.id.totalTimer );
+
+        totalText.setText("Total remaining");
 
         addTimer( STUDY_ID, studyLength );
 //        startService( intent );
@@ -95,7 +103,6 @@ public class TimerActivity extends ActionBarActivity
         this.finish(); // kill current activity
     }
 
-
     private void stopTimer( String sessionName )
     {
         Intent intent = new Intent( this, TimerService.class );
@@ -112,6 +119,8 @@ public class TimerActivity extends ActionBarActivity
 
     public void studyComplete()
     {
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(1000);
 
 //        Notification.Builder nb = new Notification.Builder( this )
         Intent intent = new Intent();
@@ -128,9 +137,10 @@ public class TimerActivity extends ActionBarActivity
 
         notification.flags = Notification.FLAG_AUTO_CANCEL;
 
-
         NotificationManager nm = (NotificationManager) getSystemService( NOTIFICATION_SERVICE );
         nm.notify( 0, notification );
+
+        currentText.setText("Time's up!");
 
         Button stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setText("Back");
@@ -145,7 +155,7 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        String text = String.format( "%01d:%02d:%02d", hours, mins, secs );
+        String currentTime = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
         //DEBUG PUT THIS SOMEWHERE ELSE
         secs = (int) sessionTimeLeft;
@@ -155,14 +165,10 @@ public class TimerActivity extends ActionBarActivity
         mins = mins % 60;
         secs = secs % 60;
 
-        if( mins == 0 && hours == 0) {
+        String totalTime = String.format( "%01d:%02d:%02d", hours, mins, secs );
 
-
-
-        }
-        String sessionText = String.format( "%01d:%02d:%02d", hours, mins, secs );
-
-        timerText.setText( timerName + "\n" + text + "\nSession time left\n" + sessionText );
+        currentTimer.setText(currentTime);
+        totalTimer.setText(totalTime);
     }
 
 
@@ -184,12 +190,9 @@ public class TimerActivity extends ActionBarActivity
             //Total session length over
             stopTimer( timerName );
 
-            updateTimer( sessionTimeLeft, intervalTimeLeft, "Studying over" );
-
             studyComplete();
             return;
         }
-
         if ( intervalTimeLeft <= 0 )
         {
             Log.d( "TimerActivity", "Stopping timer: " + timerName );
@@ -201,14 +204,16 @@ public class TimerActivity extends ActionBarActivity
             {
                 addTimer( BREAK_ID, breakLength );
                 totalTimeStudied += breakLength;
+                currentText.setText("Break time");
             }
             else if ( timerName.equals( BREAK_ID ) )
             {
                 addTimer( STUDY_ID, studyLength );
                 totalTimeStudied += studyLength;
+                currentText.setText("Study time");
             }
+
             Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
             v.vibrate(500);
         }
 
