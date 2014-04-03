@@ -51,7 +51,7 @@ public class SetupActivity extends ActionBarActivity
         String inputStudyMins    = ((EditText) findViewById(R.id.InputStudyMins)).getText().toString();
         String inputBreakMins    = ((EditText) findViewById(R.id.InputBreakMins)).getText().toString();
 
-        long totalTime = getTime(inputSessionHours,inputSessionMins); // as no hours for study, input "0"
+        long totalTime = getTime(inputSessionHours,inputSessionMins);
         long studyTime = getTime("0", inputStudyMins); // as no hours for study, input "0"
         long breakTime = getTime("0", inputBreakMins); // as no hours for break, input "0"
 
