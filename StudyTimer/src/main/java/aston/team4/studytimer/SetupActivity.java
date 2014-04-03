@@ -74,16 +74,6 @@ public class SetupActivity extends ActionBarActivity
     }
 
     /**
-     * Returns true if EditText is empty.
-     *
-     * @param field
-     * @return
-     */
-    private boolean isFieldEmpty(EditText field) {
-        return (field.getText().toString().length() == 0);
-    }
-
-    /**
      * Print out a short android toast with a message.
      * @param message The message to display on screen - should be kept short.
      */
