@@ -51,9 +51,18 @@ public class SetupActivity extends ActionBarActivity
         String inputStudyMins    = ((EditText) findViewById(R.id.InputStudyMins)).getText().toString();
         String inputBreakMins    = ((EditText) findViewById(R.id.InputBreakMins)).getText().toString();
 
-        intent.putExtra(TimerActivity.SESSION_LENGTH, getTime(inputSessionHours,inputSessionMins));
-        intent.putExtra(TimerActivity.STUDY_LENGTH, getTime("0",inputStudyMins));
-        intent.putExtra(TimerActivity.BREAK_LENGTH, getTime("0",inputBreakMins));
+        long totalTime = getTime(inputSessionHours,inputSessionMins); // as no hours for study, input "0"
+        long studyTime = getTime("0", inputStudyMins); // as no hours for study, input "0"
+        long breakTime = getTime("0", inputBreakMins); // as no hours for break, input "0"
+
+        if(totalTime <= 0 || studyTime <= 0 || breakTime <= 0) {
+            printToast("Please fill out all fields");
+            return;
+        }
+
+        intent.putExtra(TimerActivity.SESSION_LENGTH, totalTime);
+        intent.putExtra(TimerActivity.STUDY_LENGTH, studyTime);
+        intent.putExtra(TimerActivity.BREAK_LENGTH, breakTime);
 
         startActivity(intent);
     }
