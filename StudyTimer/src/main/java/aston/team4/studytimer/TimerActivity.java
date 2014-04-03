@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -144,6 +145,8 @@ public class TimerActivity extends ActionBarActivity
 
         Button stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setText("Back");
+
+        setBackground("#D3EA92");
     }
 
     private void updateTimer( long sessionTimeLeft, long intervalTimeLeft, String timerName )
@@ -171,7 +174,11 @@ public class TimerActivity extends ActionBarActivity
         totalTimer.setText(totalTime);
     }
 
-
+    public void setBackground(String hex) {
+        int color = Color.parseColor(hex);
+        View view = this.getWindow().getDecorView();
+        view.setBackgroundColor(color);
+    }
 
     private TimerService timerService = new TimerService( this );
 
@@ -205,12 +212,14 @@ public class TimerActivity extends ActionBarActivity
                 addTimer( BREAK_ID, breakLength );
                 totalTimeStudied += breakLength;
                 currentText.setText("Break time");
+                setBackground("#A8DFF4");
             }
             else if ( timerName.equals( BREAK_ID ) )
             {
                 addTimer( STUDY_ID, studyLength );
                 totalTimeStudied += studyLength;
                 currentText.setText("Study time");
+                setBackground("#FFFFFF");
             }
 
             Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
