@@ -55,8 +55,13 @@ public class SetupActivity extends ActionBarActivity
         long studyTime = getTime("0", inputStudyMins); // as no hours for study, input "0"
         long breakTime = getTime("0", inputBreakMins); // as no hours for break, input "0"
 
+        if(totalTime < (studyTime + breakTime)) {
+            printToast("Total must be greater than study and break.");
+            return;
+        }
+
         if(totalTime <= 0 || studyTime <= 0 || breakTime <= 0) {
-            printToast("Please fill out all fields");
+            printToast("Please fill out each section");
             return;
         }
 
