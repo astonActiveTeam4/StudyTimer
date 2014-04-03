@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -6,17 +6,13 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="aston.team4.studytimer.SetupActivity">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+                tools:context="aston.team4.studytimer.SetupActivity"
+                android:orientation="vertical">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/totalTimeBlock"
             android:layout_marginBottom="30dp">
 
@@ -33,102 +29,78 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:id="@+id/InputSessionHours"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/inputSessionHours"
                     android:hint="Hours"
-                    android:layout_weight="1" />
+                    android:layout_weight="0.5" />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/inputSessionMins"
+                    android:id="@+id/InputSessionMins"
                     android:hint="Minutes"
-                    android:layout_weight="1" />
+                    android:layout_weight="0.5" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/studyTimeBlock"
-            android:layout_marginBottom="15dp">
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/studyTimeBlock">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/study_time_input_label"
-                />
+                android:layout_weight="0.5" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/inputStudyHours"
-                    android:hint="Hours"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/inputStudyMins"
-                    android:hint="Minutes"
-                    android:layout_weight="1" />
-            </LinearLayout>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/InputStudyMins"
+                android:hint="Minutes"
+                android:layout_weight="0.5" />
         </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/breakTimeBlock"
+        android:layout_marginBottom="15dp">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/breakTimeBlock"
-            android:layout_marginBottom="15dp">
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/break_time_input_label"/>
+                android:text="@string/break_time_input_label"
+                android:layout_weight="0.5"
+                android:layout_gravity="center" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/inputBreakHours"
-                    android:hint="Hours"
-                    android:layout_weight="1" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/inputBreakMins"
-                    android:hint="Minutes"
-                    android:layout_weight="1" />
-            </LinearLayout>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/InputBreakMins"
+                android:hint="Minutes"
+                android:layout_gravity="center|right"
+                android:layout_weight="0.5" />
         </LinearLayout>
-
     </LinearLayout>
 
     <Button
@@ -139,6 +111,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:enabled="true"
-        android:onClick="onStudyStartButtonPressed"/>
+        android:onClick="onStudyStartButtonPressed"
+        android:layout_gravity="center_horizontal" />
 
-</RelativeLayout>
+</LinearLayout>

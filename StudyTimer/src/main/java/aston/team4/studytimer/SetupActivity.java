@@ -16,6 +16,7 @@ public class SetupActivity extends ActionBarActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+      //  setContentView( R.layout.activity_setup );
         setContentView( R.layout.activity_setup );
     }
 
@@ -45,62 +46,40 @@ public class SetupActivity extends ActionBarActivity
     public void onStudyStartButtonPressed( View view ) {
         Intent intent = new Intent(this, TimerActivity.class);
 
-        /*
-        Contains all the EditText fields for that will contribute to a timer.
-         */
-        EditText[] inputFields = {
-                (EditText) findViewById(R.id.inputSessionHours),
-                (EditText) findViewById(R.id.inputSessionMins),
+        String inputSessionHours = ((EditText) findViewById(R.id.InputSessionHours)).getText().toString();
+        String inputSessionMins  = ((EditText) findViewById(R.id.InputSessionMins)).getText().toString();
+        String inputStudyMins    = ((EditText) findViewById(R.id.InputStudyMins)).getText().toString();
+        String inputBreakMins    = ((EditText) findViewById(R.id.InputBreakMins)).getText().toString();
 
-                (EditText) findViewById(R.id.inputStudyHours),
-                (EditText) findViewById(R.id.inputStudyMins),
+        long totalTime = getTime(inputSessionHours,inputSessionMins);
+        long studyTime = getTime("0", inputStudyMins); // as no hours for study, input "0"
+        long breakTime = getTime("0", inputBreakMins); // as no hours for break, input "0"
 
-                (EditText) findViewById(R.id.inputBreakHours),
-                (EditText) findViewById(R.id.inputBreakMins),
-        };
-
-        /*
-        Gets the values from the fields, converts to seconds and insert into TimerActivity.
-
-        Every type of input (session, study, break) has 2 fields (HH and MM), therefore loop increments by 2.
-         */
-        boolean canStart = true;
-        for (int i = 0; i < inputFields.length; i += 2) {
-            String inputHoursString = inputFields[i].getText().toString();
-            String inputMinsString = inputFields[i + 1].getText().toString();
-            if(inputHoursString.length() == 0){
-                inputHoursString= "0";
-
-            }
-
-
-            if (!((inputHoursString.length() == 0) || (inputMinsString.length() == 0))) {
-                long inputHoursAsSecs = Integer.valueOf(inputHoursString);
-                long inputMinsAsSecs = Integer.valueOf(inputMinsString);
-
-                if((inputHoursAsSecs + inputMinsAsSecs) >= 0) { // make sure they're not set to 0. can't have timers endlessly switching between one and the other.
-                    long inputTime = ((inputHoursAsSecs * 60) * 60) + (inputMinsAsSecs * 60);
-
-                    if (i == 0) {
-                        intent.putExtra(TimerActivity.SESSION_LENGTH, inputTime);
-                    } else if (i == 2) {
-                        intent.putExtra(TimerActivity.STUDY_LENGTH, inputTime);
-                    } else if (i == 4) {
-                        intent.putExtra(TimerActivity.BREAK_LENGTH, inputTime);
-                    }
-                } else {
-                    canStart = false;
-                }
-            } else {
-                canStart = false;
-
-                printToast("Please fill in all fields.");
-            }
+        if(totalTime <= 0 || studyTime <= 0 || breakTime <= 0) {
+            printToast("Please fill out all fields");
+            return;
         }
 
-        if(canStart) {
-            startActivity(intent);
+        intent.putExtra(TimerActivity.SESSION_LENGTH, totalTime);
+        intent.putExtra(TimerActivity.STUDY_LENGTH, studyTime);
+        intent.putExtra(TimerActivity.BREAK_LENGTH, breakTime);
+
+        startActivity(intent);
+    }
+
+    private long getTime(String hours, String mins) {
+        long inputHoursAsSecs = 0;
+        long inputMinsAsSecs = 0;
+
+        if(hours != null && hours.trim().length() > 0) {
+            inputHoursAsSecs = Integer.valueOf(hours);
         }
+
+        if(mins != null && mins.trim().length() > 0) {
+            inputMinsAsSecs = Integer.valueOf(mins);
+        }
+
+        return ((inputHoursAsSecs * 60) * 60) + (inputMinsAsSecs * 60);
     }
 
     /**
