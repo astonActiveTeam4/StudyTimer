@@ -3,9 +3,9 @@
 
     <string name="app_name">StudyTimer</string>
     <string name="action_settings">Settings</string>
-    <string name="session_time_input_label">How long are we working today?</string>
-    <string name="study_time_input_label">Length of your study sessions</string>
-    <string name="break_time_input_label">Length of your breaks</string>
+    <string name="session_time_input_label">How long do you want to work?</string>
+    <string name="study_time_input_label">Study length</string>
+    <string name="break_time_input_label">Break length</string>
     <string name="study_start_button">Start Studying</string>
     <string name="title_activity_timer">TimerActivity</string>
     <string name="hello_world">Hello world!</string>
